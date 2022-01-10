@@ -178,7 +178,7 @@
 
 
 (define (new-sqrt-iter new-guess x (prev-guess 0))
-  (displayln prev-guess) (newline)
+  (displayln prev-guess)
   (if (new-good-enough? prev-guess new-guess)
     new-guess
     (new-sqrt-iter (improve new-guess x)
@@ -193,4 +193,54 @@
 ; 2. Большие же значения будут иметь подобную проблему, перешагивая значение то вверх, то вниз
 ; не находя достаточно близкого значения, из-за большей разницы при двоичной конвертации числа.
 
+
+
+;1.8 Метод Ньютона для кубических корней основан на том факте, что если Y является 
+; приближением к кубическому корню из X, то лучшее приближение дает значение
+;                (x/y^2 + 2y) / 3
+; Используйте эту формулу для реализации процедуры извлечения кубического корня, аналогичной 
+; процедуре извлечения квадратного корня. (В 1.3.4 мы увидим, как реализовать метод Ньютона в 
+; целом как абстракцию этих процедур извлечения квадратного и кубического корня.)
+
+
+(define (power-iter y powered power i )  
+  (if(= i power)
+    powered
+    (power-iter y (* powered y) power (+ i 1)))); Итератор по нахождению n-ой степени.
+
+(define (power-up y n)
+  (power-iter y y n 1)); Находит n-ую степень y.
+
+(define (sum-divider x y power)
+(/ (+ x y) power)); Делит сумму двух первых аргументов на третий.
+
+(define (uni-improve guess x power) 
+  (sum-divider 
+    (* guess (- power 1))
+    (/ x (power-up guess  (- power 1)))
+    power)
+  ); Универсальнная процедура приближения, для нахождения n-ого корня заданного числа. 
+
+
+(define (nmrt power x y)  
+  (define prev-guess (- y 1))
+  (cond ((< x 0) "У отрицательных здесь корни не пройдут!")
+    ((= x 0) 0)
+    ((<= power 0) "Отрицательная или нулевая степень корня не имеет смысла")
+  (else (nmrt-iter x power y prev-guess))
+  ))
+
+
+(define (nmrt-iter x power guess prev-guess)
+  (display guess) (newline)
+  (if (new-good-enough? prev-guess guess)
+    guess
+    (nmrt-iter
+      x
+      power 
+      (uni-improve guess x power) 
+      guess))
+); Процедура нахождения любого(В приделах разумного) положительного корня заданного положительного числа.
+
+(nmrt 10 0.5 1); => 0.9438743130141137
 
