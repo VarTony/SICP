@@ -208,8 +208,10 @@
     powered
     (power-iter y (* powered y) power (+ i 1)))); Итератор по нахождению n-ой степени.
 
-(define (power-up y n)
-  (power-iter y y n 1)); Находит n-ую степень y.
+(define (power-up y n) (
+  if(= n 0)
+   1
+  (power-iter y y n 1))); Находит n-ую степень y.
 
 (define (sum-divider x y power)
 (/ (+ x y) power)); Делит сумму двух первых аргументов на третий.
